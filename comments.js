@@ -67,4 +67,19 @@ app.delete('/comments/:id', (req, res) => {
       const comments = JSON.parse(data);
       const commentIndex = comments.findIndex((comment) => comment.id === parseInt(req.params.id));
 
-      if (commentIndex
+      if (commentIndex !== -1) {
+        comments.splice(commentIndex, 1);
+
+        fs.writeFile(path.join(__dirname, 'comments.json'), JSON.stringify(comments, null, 2), (err) => {
+          if (err) {
+            res.status(500).send('Internal Server Error');
+          } else {
+            res.send('Comment deleted successfully');
+          }
+        });
+      } else {
+        res.status(404).send('Comment not found');
+      }
+    }
+});
+});
